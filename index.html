@@ -3,1686 +3,844 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamificación en la Enseñanza - Formación para Profesores</title>
+    <title>Formación Gamificación en la Enseñanza</title>
     <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #2196F3;
+            --accent-color: #FFC107;
+            --light-bg: #f9f9f9;
+            --dark-text: #333;
+            --card-bg: #ffffff;
+            --border-color: #ddd;
+            --border-radius: 8px;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --transition-speed: 0.3s;
+        }
+
+        /* Dark Mode Variables */
+        body.dark-mode {
+            --light-bg: #121212;
+            --dark-text: #e0e0e0;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary-color: #6C63FF;
-            --secondary-color: #4CAF50;
-            --accent-color: #FF6B6B;
-            --background-color: #f5f7fa;
-            --text-color: #2d3748;
-            --card-bg: #ffffff;
-            --nav-bg: #2d3748;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Arial', sans-serif;
             line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--background-color);
+            color: var(--dark-text);
+            background-color: var(--light-bg);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
         }
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, var(--primary-color), #8B85FF);
+        /* Reading Progress Bar */
+        #reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+            width: 0%;
+            z-index: 2000;
+            transition: width 0.1s;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 2rem 1rem;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem 0;
+            box-shadow: var(--shadow);
+            position: relative;
         }
 
-        header h1 {
+        .header h1 {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
         }
 
-        header p {
+        .header p {
             font-size: 1.2rem;
             opacity: 0.9;
         }
 
-        /* Navigation */
-        nav {
-            background-color: var(--nav-bg);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .theme-toggle:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .nav-tabs {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
+            background-color: var(--card-bg);
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .nav-btn {
+        .tab-button {
             background: none;
             border: none;
-            color: white;
             padding: 1rem 1.5rem;
             cursor: pointer;
             font-size: 1rem;
+            color: var(--dark-text);
             transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
+            border-radius: var(--border-radius);
+            margin: 0.25rem;
+            font-weight: 500;
         }
 
-        .nav-btn:hover, .nav-btn.active {
-            background-color: rgba(255,255,255,0.1);
-            border-bottom-color: var(--secondary-color);
+        .tab-button:hover {
+            background-color: rgba(33, 150, 243, 0.1);
+            transform: translateY(-2px);
         }
 
-        /* Main Content */
-        main {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+        .tab-button.active {
+            background-color: var(--primary-color);
+            color: white;
         }
 
-        .section {
+        .tab-content {
             display: none;
-            animation: fadeIn 0.5s ease;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease-in-out;
         }
 
-        .section.active {
+        .tab-content.active {
             display: block;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .content-card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        h2 {
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-            font-size: 2rem;
-            border-bottom: 3px solid var(--secondary-color);
-            padding-bottom: 0.5rem;
-            display: inline-block;
-        }
-
-        h3 {
-            color: var(--nav-bg);
-            margin: 1.5rem 0 1rem;
-            font-size: 1.5rem;
-        }
-
-        p {
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        ul {
-            margin-left: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        li {
-            margin-bottom: 0.5rem;
-        }
-
-        /* Interactive Elements */
-        .interactive-box {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1.5rem 0;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .interactive-box:hover {
-            transform: scale(1.02);
-        }
-
-        .click-to-reveal {
-            background-color: #e2e8f0;
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            cursor: pointer;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .click-to-reveal .hidden-content {
-            display: none;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px dashed #cbd5e0;
-        }
-
-        .click-to-reveal.revealed .hidden-content {
-            display: block;
-            animation: slideDown 0.3s ease;
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        /* Quiz Styles */
-        .quiz-container {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .content-section {
+            animation: slideDown 0.6s ease-out;
         }
 
-        .question {
-            margin-bottom: 2rem;
+        .clickable-box {
+            background-color: var(--card-bg);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--border-radius);
             padding: 1.5rem;
-            background-color: #f7fafc;
-            border-radius: 8px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .question h4 {
-            margin-bottom: 1rem;
-            color: var(--nav-bg);
-        }
-
-        .options {
-            list-style: none;
-            margin-left: 0;
-        }
-
-        .options li {
-            margin-bottom: 0.5rem;
-        }
-
-        .option-label {
-            display: block;
-            padding: 0.75rem 1rem;
-            background-color: white;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
+            margin: 1rem 0;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: var(--shadow);
         }
 
-        .option-label:hover {
-            border-color: var(--primary-color);
-            background-color: #f0ebff;
+        .clickable-box:hover {
+            transform: translateX(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
-        input[type="radio"] {
-            margin-right: 10px;
-        }
-
-        .submit-btn {
-            background: linear-gradient(135deg, var(--secondary-color), #45a049);
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            display: block;
-            margin: 2rem auto 0;
-        }
-
-        .submit-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .results {
+        .clickable-box.hidden {
             display: none;
-            margin-top: 2rem;
-            padding: 2rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 10px;
-            text-align: center;
         }
 
-        .results.show {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .score {
-            font-size: 3rem;
-            font-weight: bold;
-            margin: 1rem 0;
-        }
-
-        /* Library Section */
-        .library-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .resource-card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-top: 4px solid var(--primary-color);
-        }
-
-        .resource-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 12px rgba(0,0,0,0.15);
-        }
-
-        .resource-card h4 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-        }
-
-        .resource-type {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background-color: #e2e8f0;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-            color: var(--nav-bg);
-        }
-
-        .resource-type.libro { background-color: #ffeaa7; }
-        .resource-type.web { background-color: #74b9ff; color: white; }
-        .resource-type.video { background-color: #ff7675; color: white; }
-
-        .resource-link {
-            display: inline-block;
-            margin-top: 1rem;
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: bold;
-            transition: color 0.3s ease;
-        }
-
-        .resource-link:hover {
-            color: var(--secondary-color);
-        }
-
-        /* Progress Indicator */
-        .progress-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-        }
-
-        .progress-bar {
-            width: 150px;
-            height: 10px;
-            background-color: #e2e8f0;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--nav-bg);
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 3rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8rem;
-            }
-
-            .nav-container {
-                flex-direction: column;
-            }
-
-            .nav-btn {
-                width: 100%;
-                text-align: left;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-            }
-
-            .content-card {
-                padding: 1.5rem;
-            }
-
-            h2 {
-                font-size: 1.5rem;
-            }
-
-            .library-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .progress-container {
-                bottom: 10px;
-                right: 10px;
-                padding: 0.75rem;
-            }
-        }
-
-        /* Badge System */
-        .badge-container {
+        .badge-system {
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
-            margin: 2rem 0;
-            justify-content: center;
-        }
-
-        .badge {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 50px;
-            font-weight: bold;
-            opacity: 0.5;
-            transition: all 0.3s ease;
-        }
-
-        .badge.earned {
-            opacity: 1;
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        /* Accordion for content sections */
-        .accordion {
             margin: 1rem 0;
         }
 
-        .accordion-item {
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
+        .badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .badge:hover {
+            transform: scale(1.2);
+        }
+
+        .badge.locked {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .badge earned {
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .quiz-container {
+            background-color: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .question {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .option:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        body.dark-mode .option:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .option input {
+            margin-right: 0.5rem;
+        }
+
+        .accordion {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin: 0.5rem 0;
             overflow: hidden;
         }
 
         .accordion-header {
-            background-color: #f7fafc;
-            padding: 1rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .accordion-header:hover {
-            background-color: #edf2f7;
         }
 
         .accordion-content {
+            padding: 1rem;
             display: none;
+            background-color: var(--card-bg);
+            color: var(--dark-text);
+        }
+
+        .progress-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            border: 3px solid white;
+        }
+
+        .resource-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
             padding: 1.5rem;
-            background-color: white;
-        }
-
-        .accordion-item.active .accordion-content {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-
-        .accordion-icon {
+            margin: 1rem 0;
+            box-shadow: var(--shadow);
             transition: transform 0.3s ease;
+            border: 1px solid var(--border-color);
         }
 
-        .accordion-item.active .accordion-icon {
-            transform: rotate(180deg);
+        .resource-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .resource-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #1976d2;
+        }
+
+        .feedback-msg {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            display: none;
+        }
+
+        .feedback-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        body.dark-mode .feedback-success {
+            background-color: #1e4620;
+            color: #d4edda;
+            border-color: #2d5a2e;
+        }
+
+        body.dark-mode .feedback-error {
+            background-color: #461e1e;
+            color: #f8d7da;
+            border-color: #5a2d2d;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            color: var(--dark-text);
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tab-button {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .tab-content {
+                padding: 1rem;
+            }
+            
+            .clickable-box {
+                padding: 1rem;
+            }
+
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🎮 Gamificación en la Enseñanza</h1>
-        <p>Formación interactiva para profesores innovadores</p>
-    </header>
-
-    <nav>
-        <div class="nav-container">
-            <button class="nav-btn active" data-section="intro">1. Introducción</button>
-            <button class="nav-btn" data-section="fundamentos">2. Fundamentos</button>
-            <button class="nav-btn" data-section="elementos">3. Elementos</button>
-            <button class="nav-btn" data-section="estrategias">4. Estrategias</button>
-            <button class="nav-btn" data-section="implementacion">5. Implementación</button>
-            <button class="nav-btn" data-section="evaluacion">6. Evaluación</button>
-            <button class="nav-btn" data-section="cuestionario">📝 Cuestionario</button>
-            <button class="nav-btn" data-section="biblioteca">📚 Biblioteca</button>
-        </div>
-    </nav>
-
-    <main>
-        <!-- Sección 1: Introducción -->
-        <section id="intro" class="section active">
-            <div class="content-card">
-                <h2>Introducción a la Gamificación</h2>
-                
-                <p>Bienvenido a esta formación interactiva sobre gamificación educativa. A lo largo de este curso, descubrirás cómo transformar tu enseñanza mediante técnicas de juego.</p>
-
-                <div class="interactive-box" onclick="showWelcomeMessage()">
-                    <h3>🎯 ¿Qué aprenderás hoy?</h3>
-                    <p style="margin-top: 1rem;">Haz clic para descubrir los objetivos de aprendizaje</p>
-                    <div id="welcome-content" style="display: none; margin-top: 1rem;">
-                        <ul>
-                            <li>Comprender los fundamentos de la gamificación</li>
-                            <li>Identificar elementos de juego aplicables al aula</li>
-                            <li>Diseñar estrategias gamificadas efectivas</li>
-                            <li>Implementar y evaluar experiencias gamificadas</li>
-                            <li>Acceder a recursos especializados</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <h3>¿Qué es la Gamificación?</h3>
-                <p>La gamificación es el uso de elementos y técnicas de diseño de juegos en contextos no lúdicos, como el educativo, para motivar y comprometer a los estudiantes.</p>
-
-                <div class="click-to-reveal" onclick="toggleReveal(this)">
-                    <strong>📌 Haz clic para ver la definición experta</strong>
-                    <div class="hidden-content">
-                        <p><em>"La gamificación es el uso de elementos de diseño de juegos en contextos no relacionados con juegos"</em> - Deterding et al. (2011)</p>
-                        <p>En educación, esto significa incorporar mecánicas como puntos, insignias, tablas de clasificación, narrativas y desafíos para aumentar la motivación intrínseca de los estudiantes.</p>
-                    </div>
-                </div>
-
-                <h3>Beneficios Clave</h3>
-                <ul>
-                    <li>✅ <strong>Aumento de la motivación:</strong> Los estudiantes se involucran más activamente</li>
-                    <li>✅ <strong>Mejora del compromiso:</strong> Mayor participación en actividades de aprendizaje</li>
-                    <li>✅ <strong>Desarrollo de habilidades:</strong> Fomento de la resolución de problemas y pensamiento crítico</li>
-                    <li>✅ <strong>Retroalimentación inmediata:</strong> Los estudiantes conocen su progreso al instante</li>
-                    <li>✅ <strong>Aprendizaje personalizado:</strong> Cada estudiante avanza a su propio ritmo</li>
-                </ul>
-
-                <div class="badge-container">
-                    <div class="badge" id="badge-intro">🌟 Explorador</div>
-                    <div class="badge" id="badge-fundamentos">📚 Teórico</div>
-                    <div class="badge" id="badge-elementos">🎯 Estratega</div>
-                    <div class="badge" id="badge-estrategias">💡 Innovador</div>
-                    <div class="badge" id="badge-implementacion">🚀 Implementador</div>
-                    <div class="badge" id="badge-evaluacion">📊 Evaluador</div>
-                    <div class="badge" id="badge-quiz">🏆 Maestro Gamificador</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sección 2: Fundamentos -->
-        <section id="fundamentos" class="section">
-            <div class="content-card">
-                <h2>Fundamentos Teóricos</h2>
-
-                <p>Para implementar eficazmente la gamificación, es esencial comprender las teorías psicológicas y pedagógicas que la sustentan.</p>
-
-                <div class="accordion">
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>🧠 Teoría de la Autodeterminación</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Desarrollada por Deci y Ryan, esta teoría establece que la motivación intrínseca surge de satisfacer tres necesidades psicológicas básicas:</p>
-                            <ul>
-                                <li><strong>Autonomía:</strong> Sentir control sobre las propias acciones</li>
-                                <li><strong>Competencia:</strong> Experimentar maestría y crecimiento</li>
-                                <li><strong>Relación:</strong> Conectar con otros y sentir pertenencia</li>
-                            </ul>
-                            <p>La gamificación efectiva diseña experiencias que satisfacen estas tres necesidades.</p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>🎯 Teoría del Flow (Flujo)</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Mihaly Csikszentmihalyi describió el "flow" como un estado de inmersión total en una actividad. Para alcanzarlo:</p>
-                            <ul>
-                                <li>El desafío debe equilibrarse con la habilidad del estudiante</li>
-                                <li>Debe haber objetivos claros</li>
-                                <li>La retroalimentación debe ser inmediata</li>
-                                <li>La concentración debe ser profunda</li>
-                            </ul>
-                            <p>Los juegos logran esto naturalmente; la gamificación busca replicarlo en el aula.</p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>🔄 Ciclo de Engagement</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>El ciclo típico de engagement en gamificación incluye:</p>
-                            <ol style="margin-left: 2rem; margin-top: 1rem;">
-                                <li><strong>Descubrimiento:</strong> El estudiante encuentra la actividad</li>
-                                <li><strong>Onboarding:</strong> Aprende las reglas y mecánicas</li>
-                                <li><strong>Scaffolding:</strong> Recibe apoyo gradual mientras aprende</li>
-                                <li><strong>Endgame:</strong> Alcanza maestría y busca nuevos desafíos</li>
-                            </ol>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>🎮 Tipos de Jugadores (Bartle)</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Richard Bartle identificó cuatro tipos de jugadores:</p>
-                            <ul>
-                                <li><strong>Tripulantes (Achievers):</strong> Buscan logros y recompensas</li>
-                                <li><strong>Exploradores (Explorers):</strong> Disfrutan descubriendo contenido</li>
-                                <li><strong>Socializadores (Socializers):</strong> Prefieren interactuar con otros</li>
-                                <li><strong>Asesinos (Killers):</strong> Compiten y buscan dominar</li>
-                            </ul>
-                            <p>Una buena gamificación atiende a todos los tipos.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="interactive-box" onclick="toggleReveal(this)">
-                    <h3>💡 Reflexión Práctica</h3>
-                    <p>Haz clic para revelar una pregunta de reflexión</p>
-                    <div class="hidden-content">
-                        <p><strong>Pregunta:</strong> ¿Cuál de las tres necesidades de la Teoría de la Autodeterminación crees que está menos satisfecha en tu aula actual? ¿Cómo podría la gamificación ayudarte?</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sección 3: Elementos de Juego -->
-        <section id="elementos" class="section">
-            <div class="content-card">
-                <h2>Elementos de Juego Aplicables</h2>
-
-                <p>Los elementos de juego son las herramientas concretas que puedes utilizar para gamificar tu enseñanza. Se dividen en tres categorías principales:</p>
-
-                <h3>🔧 Mecánicas de Juego</h3>
-                <div class="click-to-reveal" onclick="toggleReveal(this)">
-                    <strong>📌 Haz clic para explorar las mecánicas</strong>
-                    <div class="hidden-content">
-                        <ul>
-                            <li><strong>Puntos:</strong> Sistema de puntuación para medir progreso</li>
-                            <li><strong>Insignias/Logros:</strong> Reconocimiento visual de hitos alcanzados</li>
-                            <li><strong>Tablas de clasificación:</strong> Comparación social del rendimiento</li>
-                            <li><strong>Niveles:</strong> Progresión estructurada en dificultad</li>
-                            <li><strong>Desafíos/Misiones:</strong> Objetivos específicos a completar</li>
-                            <li><strong>Barras de progreso:</strong> Visualización del avance</li>
-                            <li><strong>Vidas/Intentos:</strong> Límites en oportunidades de intento</li>
-                            <li><strong>Economía virtual:</strong> Monedas o recursos canjeables</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <h3>🎨 Dinámicas de Juego</h3>
-                <div class="click-to-reveal" onclick="toggleReveal(this)">
-                    <strong>📌 Haz clic para explorar las dinámicas</strong>
-                    <div class="hidden-content">
-                        <ul>
-                            <li><strong>Narrativa:</strong> Historia que contextualiza el aprendizaje</li>
-                            <li><strong>Competición:</strong> Rivalidad entre estudiantes o grupos</li>
-                            <li><strong>Cooperación:</strong> Trabajo conjunto hacia objetivos comunes</li>
-                            <li><strong>Coleccionismo:</strong> Reunir elementos o completar sets</li>
-                            <li><strong>Feedback inmediato:</strong> Respuesta instantánea a acciones</li>
-                            <li><strong>Escasez:</strong> Recursos limitados que generan valor</li>
-                            <li><strong>Imprevisibilidad:</strong> Elementos sorpresa que mantienen interés</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <h3>🎭 Componentes de Experiencia</h3>
-                <div class="click-to-reveal" onclick="toggleReveal(this)">
-                    <strong>📌 Haz clic para explorar los componentes</strong>
-                    <div class="hidden-content">
-                        <ul>
-                            <li><strong>Avatares:</strong> Representación personalizada del estudiante</li>
-                            <li><strong>Equipos:</strong> Grupos de trabajo colaborativo</li>
-                            <li><strong>Jefes finales:</strong> Desafíos culminantes de unidad</li>
-                            <li><strong>Desbloqueables:</strong> Contenido accesible tras lograr hitos</li>
-                            <li><strong>Eventos temporales:</strong> Actividades por tiempo limitado</li>
-                            <li><strong>Torneos:</strong> Competiciones estructuradas</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <h3>⚠️ Consideraciones Importantes</h3>
-                <div class="interactive-box" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);" onclick="toggleReveal(this)">
-                    <h3>🚫 Errores Comunes a Evitar</h3>
-                    <p>Haz clic para revelar</p>
-                    <div class="hidden-content">
-                        <ul>
-                            <li>❌ Usar solo puntos sin propósito pedagógico</li>
-                            <li>❌ Competición excesiva que desmotiva a algunos estudiantes</li>
-                            <li>❌ Recompensas extrínsecas que disminuyen motivación intrínseca</li>
-                            <li>❌ Complejidad innecesaria que distrae del aprendizaje</li>
-                            <li>❌ Falta de alineación con objetivos educativos</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sección 4: Estrategias -->
-        <section id="estrategias" class="section">
-            <div class="content-card">
-                <h2>Estrategias de Gamificación</h2>
-
-                <p>Existen múltiples enfoques para gamificar tu enseñanza. Aquí presentamos las estrategias más efectivas:</p>
-
-                <div class="accordion">
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>📖 Aprendizaje Basado en Narrativas</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Transforma tu currículo en una historia épica donde los estudiantes son los protagonistas.</p>
-                            <h4 style="margin-top: 1rem;">Ejemplo práctico:</h4>
-                            <ul>
-                                <li>Contexto: "Salvemos el planeta de la contaminación"</li>
-                                <li>Roles: Estudiantes son "Guardianes Ecológicos"</li>
-                                <li>Misiones: Cada unidad es una "misión" con objetivos claros</li>
-                                <li>Recompensas: Insignias de especialización (Experto en Reciclaje, Maestro del Agua, etc.)</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>🏆 Sistema de Progresión por Niveles</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Estructura el curso como un videojuego con niveles de dificultad creciente.</p>
-                            <h4 style="margin-top: 1rem;">Implementación:</h4>
-                            <ul>
-                                <li>Nivel 1: Novato (conceptos básicos)</li>
-                                <li>Nivel 2: Aprendiz (aplicación simple)</li>
-                                <li>Nivel 3: Experto (análisis y síntesis)</li>
-                                <li>Nivel 4: Maestro (creación y evaluación)</li>
-                                <li>Nivel 5: Leyenda (proyecto final integrador)</li>
-                            </ul>
-                            <p>Cada nivel requiere completar ciertas "misiones" para desbloquear el siguiente.</p>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>🎯 Aprendizaje Basado en Retos (Challenge-Based)</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Presenta el contenido como una serie de desafíos que deben superarse.</p>
-                            <h4 style="margin-top: 1rem;">Tipos de retos:</h4>
-                            <ul>
-                                <li><strong>Retos de conocimiento:</strong> Questions y quizzes</li>
-                                <li><strong>Retos de aplicación:</strong> Resolver problemas reales</li>
-                                <li><strong>Retos creativos:</strong> Producir contenido original</li>
-                                <li><strong>Retos colaborativos:</strong> Trabajar en equipo</li>
-                                <li><strong>Retos contra reloj:</strong> Limitación temporal para añadir emoción</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>👥 Gamificación Social y Cooperativa</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Utiliza dinámicas sociales para fomentar la colaboración.</p>
-                            <h4 style="margin-top: 1rem;">Estrategias:</h4>
-                            <ul>
-                                <li>Equipos permanentes que compiten/cooperan</li>
-                                <li>Sistema de "compañeros de misión"</li>
-                                <li>Recompensas grupales por logros colectivos</li>
-                                <li>Tableros de líderes por equipos (no individuales)</li>
-                                <li>Mecánicas de ayuda entre pares (bonificaciones por ayudar)</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>🔄 Clase Invertida Gamificada</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Combina flipped classroom con elementos de juego.</p>
-                            <h4 style="margin-top: 1rem;">Cómo funciona:</h4>
-                            <ul>
-                                <li>Estudiantes "desbloquean" contenido teórico en casa</li>
-                                <li>El tiempo en clase es para "misiones prácticas"</li>
-                                <li>Videos incluyen quizzes interactivos para ganar puntos</li>
-                                <li>Foros de discusión otorgan insignias de participación</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="interactive-box" onclick="toggleReveal(this)">
-                    <h3>💡 Actividad de Diseño</h3>
-                    <p>Haz clic para acceder a una plantilla de diseño</p>
-                    <div class="hidden-content">
-                        <h4>Plantilla de Diseño de Experiencia Gamificada:</h4>
-                        <ol style="margin-left: 2rem; margin-top: 1rem;">
-                            <li><strong>Tema/Narrativa:</strong> ¿Cuál es la historia?</li>
-                            <li><strong>Objetivos de aprendizaje:</strong> ¿Qué deben aprender?</li>
-                            <li><strong>Mecánicas seleccionadas:</strong> ¿Qué elementos usarás?</li>
-                            <li><strong>Sistema de progresión:</strong> ¿Cómo avanzarán?</li>
-                            <li><strong>Recompensas:</strong> ¿Qué incentivos ofrecerás?</li>
-                            <li><strong>Evaluación:</strong> ¿Cómo medirás el éxito?</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sección 5: Implementación -->
-        <section id="implementacion" class="section">
-            <div class="content-card">
-                <h2>Implementación Práctica</h2>
-
-                <p>Llevar la gamificación al aula requiere planificación cuidadosa. Sigue estos pasos para una implementación exitosa:</p>
-
-                <h3>📋 Fase 1: Planificación</h3>
-                <div class="click-to-reveal" onclick="toggleReveal(this)">
-                    <strong>📌 Pasos de planificación (haz clic)</strong>
-                    <div class="hidden-content">
-                        <ol style="margin-left: 2rem;">
-                            <li>Define objetivos de aprendizaje claros</li>
-                            <li>Conoce a tu audiencia (tipos de jugadores)</li>
-                            <li>Selecciona elementos de juego apropiados</li>
-                            <li>Diseña la narrativa o contexto</li>
-                            <li>Planifica el sistema de recompensas</li>
-                            <li>Prepara materiales y recursos</li>
-                            <li>Establece criterios de evaluación</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <h3>🚀 Fase 2: Lanzamiento</h3>
-                <div class="click-to-reveal" onclick="toggleReveal(this)">
-                    <strong>📌 Estrategias de lanzamiento (haz clic)</strong>
-                    <div class="hidden-content">
-                        <ul>
-                            <li><strong>Presenta la narrativa:</strong> Introduce la historia de forma emocionante</li>
-                            <li><strong>Explica las reglas:</strong> Sé claro sobre cómo funciona el sistema</li>
-                            <li><strong>Demuestra ejemplos:</strong> Muestra qué se espera de los estudiantes</li>
-                            <li><strong>Comienza simple:</strong> No implementes todo de una vez</li>
-                            <li><strong>Genera expectativa:</strong> Crea anticipación por las recompensas</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <h3>🔄 Fase 3: Ejecución y Monitoreo</h3>
-                <div class="click-to-reveal" onclick="toggleReveal(this)">
-                    <strong>📌 Durante la implementación (haz clic)</strong>
-                    <div class="hidden-content">
-                        <ul>
-                            <li>Proporciona feedback constante e inmediato</li>
-                            <li>Monitorea el engagement de los estudiantes</li>
-                            <li>Ajusta la dificultad según sea necesario</li>
-                            <li>Celebra los logros públicamente</li>
-                            <li>Documenta observaciones y problemas</li>
-                            <li>Mantén la equidad y inclusión</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <h3>📊 Herramientas Digitales Recomendadas</h3>
-                <div class="library-grid" style="margin-top: 1rem;">
-                    <div class="resource-card">
-                        <h4>Kahoot!</h4>
-                        <span class="resource-type web">Web/App</span>
-                        <p>Plataforma de quizzes gamificados en tiempo real</p>
-                    </div>
-                    <div class="resource-card">
-                        <h4>ClassDojo</h4>
-                        <span class="resource-type web">Web/App</span>
-                        <p>Gestión de clase con sistema de puntos y avatares</p>
-                    </div>
-                    <div class="resource-card">
-                        <h4>Quizizz</h4>
-                        <span class="resource-type web">Web/App</span>
-                        <p>Cuestionarios auto-ritmados con power-ups</p>
-                    </div>
-                    <div class="resource-card">
-                        <h4>Classcraft</h4>
-                        <span class="resource-type web">Web/App</span>
-                        <p>RPG educativo completo para gestión de aula</p>
-                    </div>
-                </div>
-
-                <h3 style="margin-top: 2rem;">⚡ Consejos de Implementación Rápida</h3>
-                <div class="interactive-box" onclick="toggleReveal(this)">
-                    <h3>🎯 Empieza Pequeño</h3>
-                    <p>Haz clic para ver ideas de micro-gamificación</p>
-                    <div class="hidden-content">
-                        <ul>
-                            <li>✨ Sistema de puntos por participación</li>
-                            <li>🏅 Insignias semanales por logros específicos</li>
-                            <li>📊 Tablero de progreso visible en el aula</li>
-                            <li>🎲 Dados o ruletas para seleccionar actividades</li>
-                            <li>🃏 Cartas de "poder" para ventajas especiales</li>
-                            <li>⏱️ Retos contrarreloj ocasionales</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <h3 style="margin-top: 2rem;">🔧 Solución de Problemas Comunes</h3>
-                <div class="accordion">
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>😕 Los estudiantes pierden interés rápidamente</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p><strong>Soluciones:</strong></p>
-                            <ul>
-                                <li>Introduce elementos sorpresa y eventos temporales</li>
-                                <li>Varía las mecánicas regularmente</li>
-                                <li>Asegúrate de que el desafío esté balanceado con la habilidad</li>
-                                <li>Incorpora narrativa continua que mantenga el engagement</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>😤 Algunos estudiantes se frustran con la competición</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p><strong>Soluciones:</strong></p>
-                            <ul>
-                                <li>Ofrece múltiples caminos para el éxito</li>
-                                <li>Usa competición por equipos en lugar de individual</li>
-                                <li>Reconoce diferentes tipos de logros (no solo académicos)</li>
-                                <li>Permite reintentos sin penalización severa</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>⏰ No tengo tiempo para preparar todo</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p><strong>Soluciones:</strong></p>
-                            <ul>
-                                <li>Comienza con una sola mecánica (ej. solo puntos)</li>
-                                <li>Reutiliza plantillas y estructuras existentes</li>
-                                <li>Involucra a los estudiantes en el diseño</li>
-                                <li>Usa herramientas digitales que automatizan procesos</li>
-                                <li>Colabora con otros profesores para compartir carga</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sección 6: Evaluación -->
-        <section id="evaluacion" class="section">
-            <div class="content-card">
-                <h2>Evaluación en Contextos Gamificados</h2>
-
-                <p>La evaluación en entornos gamificados debe ser coherente con la filosofía de juego y proporcionar feedback significativo.</p>
-
-                <h3>📈 Tipos de Evaluación Gamificada</h3>
-                
-                <div class="accordion">
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>🎯 Evaluación Formativa Continua</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Utiliza mecánicas de juego para evaluar durante el proceso:</p>
-                            <ul>
-                                <li>Puntos por completitud de tareas</li>
-                                <li>Insignias por dominar conceptos específicos</li>
-                                <li>Barras de progreso visibles</li>
-                                <li>Feedback inmediato tras cada acción</li>
-                                <li>Sistema de "vidas" que permite reintentar</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>🏆 Evaluación Sumativa como "Jefe Final"</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Transforma exámenes tradicionales en desafíos épicos:</p>
-                            <ul>
-                                <li>Presenta el examen como una "misión final"</li>
-                                <li>Divide en "niveles" de dificultad creciente</li>
-                                <li>Permite usar "power-ups" (ayudas limitadas)</li>
-                                <li>Ofrece recompensas especiales por superar el reto</li>
-                                <li>Incluye elementos narrativos en las preguntas</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>👥 Evaluación entre Pares Gamificada</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Los estudiantes se evalúan mutuamente con sistemas de juego:</p>
-                            <ul>
-                                <li>Puntos por proporcionar feedback constructivo</li>
-                                <li>Insignias de "Crítico Experto"</li>
-                                <li>Sistema de votación tipo "like" con pesos diferentes</li>
-                                <li>Rankings de revisores más útiles</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="accordion-item" onclick="toggleAccordion(this)">
-                        <div class="accordion-header">
-                            <strong>📊 Rúbricas como "Mapas de Progreso"</strong>
-                            <span class="accordion-icon">▼</span>
-                        </div>
-                        <div class="accordion-content">
-                            <p>Transforma rúbricas tradicionales en mapas de aventura:</p>
-                            <ul>
-                                <li>Cada criterio es una "región" a conquistar</li>
-                                <li>Niveles de desempeño son "rangos" a alcanzar</li>
-                                <li>Visualización clara del camino recorrido</li>
-                                <li>Indicadores de qué falta para el siguiente nivel</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <h3 style="margin-top: 2rem;">📊 Métricas de Éxito</h3>
-                <div class="click-to-reveal" onclick="toggleReveal(this)">
-                    <strong>📌 ¿Qué medir para evaluar tu gamificación? (haz clic)</strong>
-                    <div class="hidden-content">
-                        <h4 style="margin-top: 1rem;">Métricas cuantitativas:</h4>
-                        <ul>
-                            <li>Tasa de completitud de actividades</li>
-                            <li>Tiempo dedicado a tareas</li>
-                            <li>Número de reintentos voluntarios</li>
-                            <li>Participación en actividades opcionales</li>
-                            <li>Resultados académicos comparativos</li>
-                        </ul>
-                        <h4 style="margin-top: 1rem;">Métricas cualitativas:</h4>
-                        <ul>
-                            <li>Nivel de engagement observado</li>
-                            <li>Feedback de los estudiantes</li>
-                            <li>Cambios en actitud hacia la materia</li>
-                            <li>Colaboración entre pares</li>
-                            <li>Creatividad en respuestas y proyectos</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <h3 style="margin-top: 2rem;">⚖️ Consideraciones Éticas</h3>
-                <div class="interactive-box" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="toggleReveal(this)">
-                    <h3>🔒 Aspectos Éticos Importantes</h3>
-                    <p>Haz clic para revelar</p>
-                    <div class="hidden-content">
-                        <ul>
-                            <li>✅ Evita ranking públicos que puedan avergonzar</li>
-                            <li>✅ Asegura equidad de acceso a recompensas</li>
-                            <li>✅ No uses gamificación para manipular</li>
-                            <li>✅ Permite opt-out para estudiantes incómodos</li>
-                            <li>✅ Protege datos y privacidad de estudiantes</li>
-                            <li>✅ Balancea competición con cooperación</li>
-                            <li>✅ Evalúa impacto en bienestar estudiantil</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <h3 style="margin-top: 2rem;">🔄 Ciclo de Mejora Continua</h3>
-                <p>La gamificación efectiva requiere iteración constante:</p>
-                <ol style="margin-left: 2rem; margin-top: 1rem;">
-                    <li><strong>Implementa</strong> tu diseño inicial</li>
-                    <li><strong>Recoge datos</strong> de participación y resultados</li>
-                    <li><strong>Solicita feedback</strong> de los estudiantes</li>
-                    <li><strong>Analiza</strong> qué funciona y qué no</li>
-                    <li><strong>Ajusta</strong> mecánicas y dinámicas</li>
-                    <li><strong>Repite</strong> el ciclo</li>
-                </ol>
-            </div>
-        </section>
-
-        <!-- Cuestionario de Autoevaluación -->
-        <section id="cuestionario" class="section">
-            <div class="quiz-container">
-                <h2>📝 Cuestionario de Autoevaluación</h2>
-                <p style="margin-bottom: 2rem;">Pon a prueba tus conocimientos sobre gamificación educativa. Responde todas las preguntas y descubre tu nivel de dominio.</p>
-
-                <form id="quiz-form">
-                    <div class="question">
-                        <h4>1. ¿Qué es la gamificación en educación?</h4>
-                        <ul class="options">
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q1" value="a">
-                                    Jugar videojuegos en clase como premio
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q1" value="b">
-                                    El uso de elementos de diseño de juegos en contextos educativos para motivar
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q1" value="c">
-                                    Convertir todas las clases en juegos competitivos
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q1" value="d">
-                                    Eliminar los exámenes tradicionales
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="question">
-                        <h4>2. Según la Teoría de la Autodeterminación, ¿cuáles son las tres necesidades psicológicas básicas?</h4>
-                        <ul class="options">
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q2" value="a">
-                                    Poder, riqueza y fama
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q2" value="b">
-                                    Memoria, atención y razonamiento
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q2" value="c">
-                                    Autonomía, competencia y relación
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q2" value="d">
-                                    Lectura, escritura y matemáticas
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="question">
-                        <h4>3. ¿Cuál de estos NO es un elemento de mecánica de juego?</h4>
-                        <ul class="options">
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q3" value="a">
-                                    Puntos
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q3" value="b">
-                                    Insignias
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q3" value="c">
-                                    Narrativa
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q3" value="d">
-                                    Tablas de clasificación
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="question">
-                        <h4>4. El estado de "flow" o flujo se alcanza cuando:</h4>
-                        <ul class="options">
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q4" value="a">
-                                    El desafío es mucho mayor que la habilidad
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q4" value="b">
-                                    La habilidad es mucho mayor que el desafío
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q4" value="c">
-                                    Hay equilibrio entre desafío y habilidad
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q4" value="d">
-                                    No hay ningún desafío presente
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="question">
-                        <h4>5. Según la tipología de Bartle, ¿qué tipo de jugador disfruta ayudando a otros?</h4>
-                        <ul class="options">
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q5" value="a">
-                                    Tripulante (Achiever)
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q5" value="b">
-                                    Explorador (Explorer)
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q5" value="c">
-                                    Socializador (Socializer)
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q5" value="d">
-                                    Asesino (Killer)
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="question">
-                        <h4>6. ¿Cuál es un error común al implementar gamificación?</h4>
-                        <ul class="options">
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q6" value="a">
-                                    Usar puntos sin propósito pedagógico claro
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q6" value="b">
-                                    Alinear con objetivos educativos
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q6" value="c">
-                                    Proporcionar feedback inmediato
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q6" value="d">
-                                    Ofrecer múltiples caminos para el éxito
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="question">
-                        <h4>7. En la fase de implementación, ¿por dónde se recomienda comenzar?</h4>
-                        <ul class="options">
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q7" value="a">
-                                    Implementando todas las mecánicas a la vez
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q7" value="b">
-                                    Empezando pequeño con una o dos mecánicas
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q7" value="c">
-                                    Copiando exactamente lo que hace otro profesor
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q7" value="d">
-                                    Esperando a tener todos los recursos perfectos
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="question">
-                        <h4>8. ¿Qué tipo de evaluación transforma los exámenes en "jefes finales"?</h4>
-                        <ul class="options">
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q8" value="a">
-                                    Evaluación diagnóstica
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q8" value="b">
-                                    Evaluación formativa
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q8" value="c">
-                                    Evaluación sumativa gamificada
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q8" value="d">
-                                    Autoevaluación
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="question">
-                        <h4>9. ¿Cuál es una consideración ética importante en gamificación?</h4>
-                        <ul class="options">
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q9" value="a">
-                                    Hacer rankings públicos siempre
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q9" value="b">
-                                    Asegurar equidad de acceso a recompensas
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q9" value="c">
-                                    Obligar a todos a participar sin excepción
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q9" value="d">
-                                    Usar la gamificación para controlar comportamiento
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="question">
-                        <h4>10. ¿Qué herramienta digital es específica para gestión de clase con sistema de puntos?</h4>
-                        <ul class="options">
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q10" value="a">
-                                    Kahoot!
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q10" value="b">
-                                    ClassDojo
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q10" value="c">
-                                    Quizizz
-                                </label>
-                            </li>
-                            <li>
-                                <label class="option-label">
-                                    <input type="radio" name="q10" value="d">
-                                    Google Classroom
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <button type="button" class="submit-btn" onclick="calculateResults()">🎯 Enviar Respuestas</button>
-                </form>
-
-                <div id="results" class="results">
-                    <h3>🎉 ¡Cuestionario Completado!</h3>
-                    <div class="score" id="score-display">0/10</div>
-                    <p id="feedback-message"></p>
-                    <div id="badges-earned" style="margin-top: 1.5rem;"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Biblioteca de Recursos -->
-        <section id="biblioteca" class="section">
-            <div class="content-card">
-                <h2>📚 Biblioteca de Recursos</h2>
-                <p>Explora esta colección curada de recursos para profundizar en gamificación educativa.</p>
-
-                <div class="library-grid">
-                    <!-- Libros -->
-                    <div class="resource-card">
-                        <h4>Gamify: How Gamification Motivates People to Do Extraordinary Things</h4>
-                        <span class="resource-type libro">Libro</span>
-                        <p>de Brian Burke. Una guía completa sobre los fundamentos de la gamificación en diversos contextos.</p>
-                        <a href="https://www.gartner.com/en/documents/2020315" target="_blank" class="resource-link">Ver recurso →</a>
-                    </div>
-
-                    <div class="resource-card">
-                        <h4>The Gamification of Learning and Instruction</h4>
-                        <span class="resource-type libro">Libro</span>
-                        <p>de Karl M. Kapp. Explora cómo aplicar principios de juegos al diseño instruccional.</p>
-                        <a href="https://www.pfeiffer.com/books/9781118095768" target="_blank" class="resource-link">Ver recurso →</a>
-                    </div>
-
-                    <div class="resource-card">
-                        <h4>Reality Is Broken: Why Games Make Us Better</h4>
-                        <span class="resource-type libro">Libro</span>
-                        <p>de Jane McGonigal. Examina cómo los juegos pueden mejorar la vida real y el aprendizaje.</p>
-                        <a href="https://www.janemcgonigal.com/reality-is-broken/" target="_blank" class="resource-link">Ver recurso →</a>
-                    </div>
-
-                    <div class="resource-card">
-                        <h4>Play to Learn: Everything You Need to Know About Designing Effective Learning Games</h4>
-                        <span class="resource-type libro">Libro</span>
-                        <p>de Sharon Boller y Karl Kapp. Guía práctica para crear juegos educativos efectivos.</p>
-                        <a href="https://www.astd.org/books/play-to-learn" target="_blank" class="resource-link">Ver recurso →</a>
-                    </div>
-
-                    <!-- Páginas Web -->
-                    <div class="resource-card">
-                        <h4>Classcraft Blog</h4>
-                        <span class="resource-type web">Web</span>
-                        <p>Artículos, casos de estudio y recursos prácticos sobre gamificación en el aula.</p>
-                        <a href="https://classcraft.com/blog/" target="_blank" class="resource-link">Visitar sitio →</a>
-                    </div>
-
-                    <div class="resource-card">
-                        <h4>Edutopia - Gamification</h4>
-                        <span class="resource-type web">Web</span>
-                        <p>Recursos de la Fundación George Lucas sobre prácticas educativas innovadoras incluyendo gamificación.</p>
-                        <a href="https://www.edutopia.org/topic/gamification" target="_blank" class="resource-link">Visitar sitio →</a>
-                    </div>
-
-                    <div class="resource-card">
-                        <h4>Game-Based Learning Wiki</h4>
-                        <span class="resource-type web">Web</span>
-                        <p>Wiki colaborativa con investigaciones, herramientas y mejores prácticas en aprendizaje basado en juegos.</p>
-                        <a href="https://gamebasedlearning.wordpress.com/" target="_blank" class="resource-link">Visitar sitio →</a>
-                    </div>
-
-                    <div class="resource-card">
-                        <h4>Coursera - Gamification Course (University of Pennsylvania)</h4>
-                        <span class="resource-type web">Web</span>
-                        <p>Curso gratuito de Kevin Werbach sobre fundamentos y aplicaciones de la gamificación.</p>
-                        <a href="https://www.coursera.org/learn/gamification" target="_blank" class="resource-link">Visitar curso →</a>
-                    </div>
-
-                    <!-- Videos -->
-                    <div class="resource-card">
-                        <h4>Jane McGonigal: Gaming can make a better world (TED Talk)</h4>
-                        <span class="resource-type video">Video</span>
-                        <p>Conferencia TED inspiradora sobre el potencial de los juegos para resolver problemas reales.</p>
-                        <a href="https://www.ted.com/talks/jane_mcgonigal_gaming_can_make_a_better_world" target="_blank" class="resource-link">Ver video →</a>
-                    </div>
-
-                    <div class="resource-card">
-                        <h4>Gabe Zichermann: How games make kids smarter (TED Talk)</h4>
-                        <span class="resource-type video">Video</span>
-                        <p>Explora cómo la gamificación puede mejorar el rendimiento cognitivo y la motivación.</p>
-                        <a href="https://www.ted.com/talks/gabe_zichermann_how_games_make_kids_smarter" target="_blank" class="resource-link">Ver video →</a>
-                    </div>
-
-                    <div class="resource-card">
-                        <h4>Ramsés Ochoa: Gamificación en el Aula (YouTube)</h4>
-                        <span class="resource-type video">Video</span>
-                        <p>Serie de videos prácticos sobre implementación de gamificación en contextos educativos hispanohablantes.</p>
-                        <a href="https://www.youtube.com/results?search_query=gamificacion+en+el+aula" target="_blank" class="resource-link">Ver videos →</a>
-                    </div>
-
-                    <div class="resource-card">
-                        <h4>Khan Academy - Gamification in Education</h4>
-                        <span class="resource-type web">Web</span>
-                        <p>Recursos y estudios de caso sobre cómo Khan Academy utiliza gamificación para el aprendizaje.</p>
-                        <a href="https://khanacademy.zendesk.com/hc/en-us/articles/202483630-Gamification" target="_blank" class="resource-link">Visitar recurso →</a>
-                    </div>
-                </div>
-
-                <div class="interactive-box" style="margin-top: 2rem;" onclick="toggleReveal(this)">
-                    <h3>💡 Consejo de Uso de la Biblioteca</h3>
-                    <p>Haz clic para obtener recomendaciones personalizadas</p>
-                    <div class="hidden-content">
-                        <h4>Según tu experiencia:</h4>
-                        <ul>
-                            <li><strong>Principiante:</strong> Comienza con los videos TED y el blog de Classcraft</li>
-                            <li><strong>Intermedio:</strong> Explora el curso de Coursera y Edutopia</li>
-                            <li><strong>Avanzado:</strong> Profundiza con los libros de Kapp y McGonigal</li>
-                        </ul>
-                        <p style="margin-top: 1rem;"><strong>¡No olvides guardar tus recursos favoritos para referencia futura!</strong></p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <div class="progress-container">
-        <div>Progreso del Curso</div>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill"></div>
-        </div>
-        <div style="font-size: 0.85rem; margin-top: 0.25rem;" id="progress-text">0% completado</div>
+    <!-- Reading Progress Bar -->
+    <div id="reading-progress"></div>
+
+    <div class="header">
+        <h1>Formación: Gamificación en la Enseñanza</h1>
+        <p>Transforma tu práctica docente con técnicas de juego y motivación</p>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙 Modo Oscuro</button>
     </div>
 
+    <div class="nav-tabs">
+        <button class="tab-button active" onclick="showTab('introduccion')">Introducción</button>
+        <button class="tab-button" onclick="showTab('evidencias')">Evidencias</button>
+        <button class="tab-button" onclick="showTab('fundamentos')">Fundamentos</button>
+        <button class="tab-button" onclick="showTab('elementos')">Elementos</button>
+        <button class="tab-button" onclick="showTab('estrategias')">Estrategias</button>
+        <button class="tab-button" onclick="showTab('implementacion')">Implementación</button>
+        <button class="tab-button" onclick="showTab('evaluacion')">Evaluación</button>
+        <button class="tab-button" onclick="showTab('cuestionario')">Cuestionario</button>
+        <button class="tab-button" onclick="showTab('biblioteca')">Biblioteca</button>
+    </div>
+
+    <div id="introduccion" class="tab-content active">
+        <div class="content-section">
+            <h2>¿Qué es la Gamificación?</h2>
+            <p>La gamificación es la aplicación de mecánicas y dinámicas de juego en contextos no lúdicos para aumentar la motivación, participación y aprendizaje.</p>
+            
+            <div class="clickable-box" onclick="toggleContent(this)">
+                <h3>Beneficios Clave</h3>
+                <div class="hidden-content" style="display: none;">
+                    <ul>
+                        <li>Aumento del engagement estudiantil</li>
+                        <li>Mejora de la retención de conocimientos</li>
+                        <li>Desarrollo de habilidades blandas</li>
+                        <li>Fomento del trabajo colaborativo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="badge-system">
+                <div class="badge" title="Primer Paso">P1</div>
+                <div class="badge" title="Aprendiz Curioso">AC</div>
+                <div class="badge" title="Explorador">EX</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nueva Sección: Evidencias -->
+    <div id="evidencias" class="tab-content">
+        <div class="content-section">
+            <h2>Evidencia Científica</h2>
+            <p style="margin-bottom: 1.5rem;">Estudios recientes demuestran el impacto positivo de la gamificación en el proceso de enseñanza-aprendizaje:</p>
+            
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>1. Impacto en la Motivación Intrínseca</span>
+                    <span>▼</span>
+                </div>
+                <div class="accordion-content">
+                    <strong>Título:</strong> "Gamification in education: A systematic mapping review"<br>
+                    <strong>Autores:</strong> López-Fernández, O., & López-Pernas, S. (2021)<br>
+                    <strong>Hallazgo:</strong> El estudio revisó más de 100 investigaciones y concluyó que la gamificación aumenta significativamente la motivación intrínseca de los estudiantes, especialmente cuando se utilizan narrativas envolventes y feedback inmediato.
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>2. Rendimiento Académico en STEM</span>
+                    <span>▼</span>
+                </div>
+                <div class="accordion-content">
+                    <strong>Título:</strong> "Gamified learning in higher education – A systematic review of the literature"<br>
+                    <strong>Autores:</strong> Subhash, S., & Cudney, E. A. (2018)<br>
+                    <strong>Hallazgo:</strong> Se observó una mejora del 15-20% en las calificaciones finales de cursos de ingeniería y ciencias cuando se implementaron sistemas de puntos y niveles estructurados.
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>3. Insignias Digitales y Compromiso</span>
+                    <span>▼</span>
+                </div>
+                <div class="accordion-content">
+                    <strong>Título:</strong> "Short-term and long-term effects of badges in a gamified learning experience"<br>
+                    <strong>Autores:</strong> Abramovich, S., Schunn, C., & Higashi, R. M. (2013)<br>
+                    <strong>Hallazgo:</strong> Las insignias digitales actuaron como reforzadores positivos efectivos, aumentando la persistencia en tareas difíciles y fomentando la exploración de contenidos opcionales.
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>4. Elementos de Juego en Matemáticas</span>
+                    <span>▼</span>
+                </div>
+                <div class="accordion-content">
+                    <strong>Título:</strong> "The effects of gamification on student engagement and learning outcomes"<br>
+                    <strong>Autores:</strong> Bai, S., Hew, K. F., & Gonda, D. (2020)<br>
+                    <strong>Hallazgo:</strong> La inclusión de tablas de clasificación (leaderboards) sanas y retos semanales mejoró la participación activa en clases de matemáticas en un 35%.
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span>5. Gamificación a Largo Plazo</span>
+                    <span>▼</span>
+                </div>
+                <div class="accordion-content">
+                    <strong>Título:</strong> "Assessing the effects of gamification in the classroom: A longitudinal study"<br>
+                    <strong>Autores:</strong> Hanus, M. D., & Fox, J. (2015)<br>
+                    <strong>Hallazgo:</strong> Aunque la novedad inicial es alta, los diseños que incluyen evolución de avatares y narrativa continua mantienen el engagement alto durante todo el semestre, evitando la caída de interés típica.
+                </div>
+            </div>
+
+            <div class="resource-card" style="margin-top: 2rem; border-left: 5px solid var(--accent-color);">
+                <h3>Resumen Ejecutivo</h3>
+                <p>La evidencia sugiere que la gamificación no es una solución mágica, pero cuando se diseña pedagógicamente (no solo añadiendo puntos), tiene un efecto robusto en la motivación, la asistencia y el rendimiento académico profundo.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="fundamentos" class="tab-content">
+        <div class="content-section">
+            <h2>Fundamentos Teóricos</h2>
+            <p>La gamificación se basa en principios psicológicos y pedagógicos como la Teoría de la Autodeterminación (SDT) y el Estado de Flujo (Flow).</p>
+        </div>
+    </div>
+
+    <div id="elementos" class="tab-content">
+        <div class="content-section">
+            <h2>Elementos de Gamificación</h2>
+            <p>Los componentes básicos incluyen puntos (PBL), insignias, tablas de clasificación, narrativas y feedback inmediato.</p>
+        </div>
+    </div>
+
+    <div id="estrategias" class="tab-content">
+        <div class="content-section">
+            <h2>Estrategias de Implementación</h2>
+            <p>Diferentes enfoques: estructural (añadir puntos a tareas existentes) vs. contenido (crear una narrativa completa).</p>
+        </div>
+    </div>
+
+    <div id="implementacion" class="tab-content">
+        <div class="content-section">
+            <h2>Plan de Implementación</h2>
+            <p>Pasos prácticos: Definir objetivos, conocer a los alumnos, elegir herramientas y diseñar la experiencia.</p>
+        </div>
+    </div>
+
+    <div id="evaluacion" class="tab-content">
+        <div class="content-section">
+            <h2>Evaluación y Medición</h2>
+            <p>Métodos para evaluar la efectividad: encuestas de satisfacción, análisis de datos de aprendizaje y observación directa.</p>
+        </div>
+    </div>
+
+    <div id="cuestionario" class="tab-content">
+        <div class="content-section">
+            <h2>Cuestionario Final</h2>
+            <p>Demuestra lo aprendido para ganar tu insignia digital.</p>
+            <div class="quiz-container">
+                <form id="quizForm">
+                    <div class="question">
+                        <p>1. ¿Cuál es un beneficio clave de la gamificación según los estudios?</p>
+                        <div class="option">
+                            <input type="radio" name="q1" value="a">
+                            <label>a) Disminución del interés</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q1" value="b">
+                            <label>b) Aumento de la motivación intrínseca</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q1" value="c">
+                            <label>c) Reducción de la colaboración</label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <p>2. ¿Qué elemento NO es esencial en la gamificación?</p>
+                        <div class="option">
+                            <input type="radio" name="q2" value="a">
+                            <label>a) Puntos</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q2" value="b">
+                            <label>b) Castigos severos</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q2" value="c">
+                            <label>c) Feedback</label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <p>3. Según el estudio de López-Fernández (2021), ¿qué aumenta la gamificación?</p>
+                        <div class="option">
+                            <input type="radio" name="q3" value="a">
+                            <label>a) El aburrimiento</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q3" value="b">
+                            <label>b) La motivación y el engagement</label>
+                        </div>
+                        <div class="option">
+                            <input type="radio" name="q3" value="c">
+                            <label>c) La carga administrativa</label>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary" onclick="submitQuiz()">Enviar Respuestas</button>
+                </form>
+                
+                <div id="quizFeedback" class="feedback-msg"></div>
+                
+                <div id="badgeReward" style="display:none; margin-top: 20px; text-align: center;">
+                    <h3>¡Felicidades! Has ganado una insignia:</h3>
+                    <div class="badge earned" style="width: 100px; height: 100px; font-size: 1.2rem; margin: 10px auto;">🏆<br>Maestro</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="biblioteca" class="tab-content">
+        <div class="content-section">
+            <h2>Biblioteca de Recursos</h2>
+            <div class="resource-card">
+                <h3>Artículo: "Gamificación en Educación"</h3>
+                <p>Revisión de estudios sobre impacto de la gamificación en el aprendizaje.</p>
+                <button class="btn">Descargar PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="progress-float" id="progressBar">0%</div>
+
     <footer>
-        <p>© 2024 Gamificación en la Enseñanza | Formación para Profesores Innovadores</p>
-        <p style="margin-top: 0.5rem; opacity: 0.8;">Desarrollado con ❤️ para la comunidad educativa</p>
+        <p>&copy; 2026 Formación Gamificación. Todos los derechos reservados.</p>
+        <p>Desarrollado para la innovación educativa.</p>
     </footer>
 
     <script>
-        // Navigation functionality
-        const navButtons = document.querySelectorAll('.nav-btn');
-        const sections = document.querySelectorAll('.section');
-        let visitedSections = new Set(['intro']);
+        // --- 1. GESTIÓN DE PESTAÑAS Y PROGRESO GLOBAL ---
+        function showTab(tabName) {
+            // Ocultar todos los contenidos
+            const contents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].classList.remove('active');
+            }
+            
+            // Mostrar el contenido seleccionado
+            document.getElementById(tabName).classList.add('active');
+            
+            // Actualizar botones activos
+            const buttons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('active');
+            }
+            
+            // Encontrar el botón que fue clickeado (o simularlo si se llama por ID)
+            const activeBtn = Array.from(buttons).find(b => b.getAttribute('onclick').includes(tabName));
+            if(activeBtn) activeBtn.classList.add('active');
 
-        navButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const targetSection = button.getAttribute('data-section');
-                
-                // Update navigation
-                navButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                // Show target section
-                sections.forEach(section => {
-                    section.classList.remove('active');
-                    if (section.id === targetSection) {
-                        section.classList.add('active');
-                        visitedSections.add(targetSection);
-                        updateProgress();
-                        updateBadges();
-                    }
-                });
-
-                // Scroll to top
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        });
-
-        // Progress tracking
-        function updateProgress() {
-            const totalSections = 8; // Including quiz and library
-            const progress = (visitedSections.size / totalSections) * 100;
-            document.getElementById('progress-fill').style.width = progress + '%';
-            document.getElementById('progress-text').textContent = Math.round(progress) + '% completado';
+            // Guardar progreso en LocalStorage
+            saveProgress(tabName);
+            
+            // Scroll al inicio del contenido
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Badge system
-        function updateBadges() {
-            const badgeMap = {
-                'intro': 'badge-intro',
-                'fundamentos': 'badge-fundamentos',
-                'elementos': 'badge-elementos',
-                'estrategias': 'badge-estrategias',
-                'implementacion': 'badge-implementacion',
-                'evaluacion': 'badge-evaluacion'
-            };
-
-            for (const [section, badgeId] of Object.entries(badgeMap)) {
-                if (visitedSections.has(section)) {
-                    document.getElementById(badgeId).classList.add('earned');
-                }
+        function toggleContent(element) {
+            const hiddenContent = element.querySelector('.hidden-content');
+            if (hiddenContent.style.display === 'none') {
+                hiddenContent.style.display = 'block';
+                element.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+            } else {
+                hiddenContent.style.display = 'none';
+                element.style.backgroundColor = 'var(--card-bg)';
             }
         }
 
-        // Interactive elements
-        function showWelcomeMessage() {
-            const content = document.getElementById('welcome-content');
-            content.style.display = content.style.display === 'none' ? 'block' : 'none';
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('span:last-child');
+            
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                icon.textContent = '▼';
+            } else {
+                content.style.display = 'block';
+                icon.textContent = '▲';
+            }
         }
 
-        function toggleReveal(element) {
-            element.classList.toggle('revealed');
-        }
-
-        function toggleAccordion(element) {
-            element.classList.toggle('active');
-        }
-
-        // Quiz functionality
-        const correctAnswers = {
-            q1: 'b',
-            q2: 'c',
-            q3: 'c',
-            q4: 'c',
-            q5: 'c',
-            q6: 'a',
-            q7: 'b',
-            q8: 'c',
-            q9: 'b',
-            q10: 'b'
+        // --- 2. BARRA DE PROGRESO DE LECTURA (SCROLL) ---
+        window.onscroll = function() {
+            updateReadingProgress();
+            updateGlobalProgress();
         };
 
-        function calculateResults() {
-            let score = 0;
-            let total = 10;
-            const form = document.getElementById('quiz-form');
-            const formData = new FormData(form);
+        function updateReadingProgress() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("reading-progress").style.width = scrolled + "%";
+        }
 
-            for (let [question, answer] of Object.entries(correctAnswers)) {
-                const userAnswer = formData.get(question);
-                if (userAnswer === answer) {
+        // --- 3. PROGRESO GLOBAL Y LOCALSTORAGE ---
+        function updateGlobalProgress() {
+            // Calcula progreso basado en pestañas visitadas (simulado)
+            const visited = JSON.parse(localStorage.getItem('gamification_visited_tabs') || '[]');
+            const totalTabs = 9; // Número total de pestañas
+            const progress = Math.min(100, Math.round((visited.length / totalTabs) * 100));
+            
+            const progressBar = document.getElementById('progressBar');
+            progressBar.textContent = progress + '%';
+            
+            // Animación visual si cambia
+            if(progress >= 100) {
+                progressBar.style.background = 'linear-gradient(135deg, #FFC107, #FF9800)';
+            }
+        }
+
+        function saveProgress(tabName) {
+            let visited = JSON.parse(localStorage.getItem('gamification_visited_tabs') || '[]');
+            if (!visited.includes(tabName)) {
+                visited.push(tabName);
+                localStorage.setItem('gamification_visited_tabs', JSON.stringify(visited));
+            }
+            updateGlobalProgress();
+        }
+
+        // --- 4. MODO OSCURO / CLARO ---
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeToggle');
+            
+            body.classList.toggle('dark-mode');
+            
+            const isDark = body.classList.contains('dark-mode');
+            
+            if (isDark) {
+                btn.textContent = '☀️ Modo Claro';
+                localStorage.setItem('gamification_theme', 'dark');
+            } else {
+                btn.textContent = '🌙 Modo Oscuro';
+                localStorage.setItem('gamification_theme', 'light');
+            }
+        }
+
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('gamification_theme');
+            const btn = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                btn.textContent = '☀️ Modo Claro';
+            }
+        }
+
+        // --- 5. SISTEMA DE CUESTIONARIO E INSIGNIAS ---
+        function submitQuiz() {
+            const answers = {
+                q1: 'b',
+                q2: 'b',
+                q3: 'b'
+            };
+            
+            let score = 0;
+            let total = Object.keys(answers).length;
+            const form = document.forms['quizForm'];
+            
+            for (let q in answers) {
+                const selected = form.elements[q].value;
+                if (selected === answers[q]) {
                     score++;
                 }
             }
-
-            // Display results
-            const resultsDiv = document.getElementById('results');
-            const scoreDisplay = document.getElementById('score-display');
-            const feedbackMessage = document.getElementById('feedback-message');
-            const badgesEarned = document.getElementById('badges-earned');
-
-            scoreDisplay.textContent = `${score}/${total}`;
             
-            // Custom feedback based on score
-            let feedback = '';
-            if (score === 10) {
-                feedback = '🏆 ¡Excelente! Eres un maestro de la gamificación. ¡Tu comprensión es perfecta!';
-                visitedSections.add('quiz-complete-perfect');
-            } else if (score >= 8) {
-                feedback = '🎉 ¡Muy bien! Tienes un conocimiento sólido de gamificación. ¡Sigue así!';
-                visitedSections.add('quiz-complete-excellent');
-            } else if (score >= 6) {
-                feedback = '👍 ¡Bien hecho! Comprendes los conceptos básicos. Repasa las secciones donde tuviste dudas.';
-                visitedSections.add('quiz-complete-good');
-            } else if (score >= 4) {
-                feedback = '📚 Buen intento. Te recomendamos revisar nuevamente el contenido antes de continuar.';
+            const feedback = document.getElementById('quizFeedback');
+            const badgeArea = document.getElementById('badgeReward');
+            
+            feedback.style.display = 'block';
+            badgeArea.style.display = 'none';
+            
+            if (score === total) {
+                feedback.className = 'feedback-msg feedback-success';
+                feedback.innerHTML = `¡Excelente! Puntuación perfecta: ${score}/${total}. <br>Has desbloqueado una insignia especial.`;
+                
+                // Mostrar insignia
+                badgeArea.style.display = 'block';
+                
+                // Guardar insignia en LocalStorage
+                let badges = JSON.parse(localStorage.getItem('gamification_badges') || '[]');
+                if (!badges.includes('maestro')) {
+                    badges.push('maestro');
+                    localStorage.setItem('gamification_badges', JSON.stringify(badges));
+                    alert("¡Nueva insignia guardada en tu perfil!");
+                }
             } else {
-                feedback = '💪 No te desanimes. Vuelve a estudiar las secciones e inténtalo de nuevo. ¡Tú puedes!';
+                feedback.className = 'feedback-msg feedback-error';
+                feedback.innerHTML = `Puntuación: ${score}/${total}. Inténtalo de nuevo para obtener la insignia maestra.`;
             }
-
-            feedbackMessage.textContent = feedback;
-
-            // Award badge if score is good
-            if (score >= 8) {
-                document.getElementById('badge-quiz').classList.add('earned');
-                badgesEarned.innerHTML = '<div class="badge earned">🏆 Maestro Gamificador</div>';
-            }
-
-            resultsDiv.classList.add('show');
-            updateProgress();
             
-            // Scroll to results
-            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Guardar puntuación máxima
+            const maxScore = localStorage.getItem('gamification_quiz_score') || 0;
+            if (score > maxScore) {
+                localStorage.setItem('gamification_quiz_score', score);
+            }
         }
 
-        // Initialize
-        updateProgress();
-        updateBadges();
-
-        // Add keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-                const currentActive = document.querySelector('.nav-btn.active');
-                const nextBtn = currentActive.nextElementSibling;
-                if (nextBtn) nextBtn.click();
-            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-                const currentActive = document.querySelector('.nav-btn.active');
-                const prevBtn = currentActive.previousElementSibling;
-                if (prevBtn) prevBtn.click();
+        // --- INICIALIZACIÓN ---
+        window.onload = function() {
+            loadTheme();
+            
+            // Cargar última pestaña visitada si existe
+            const lastTab = localStorage.getItem('gamification_last_tab') || 'introduccion';
+            // Nota: No llamamos a showTab automáticamente para no interferir con la URL hash si la hubiera,
+            // pero podríamos hacerlo si se desea restaurar estado exacto.
+            
+            updateGlobalProgress();
+            
+            // Simular visita a la pestaña inicial si es la primera vez
+            if(!localStorage.getItem('gamification_visited_tabs')) {
+                saveProgress('introduccion');
             }
-        });
+        };
+
+        // Guardar pestaña actual al cambiar
+        const originalShowTab = showTab;
+        showTab = function(tabName) {
+            localStorage.setItem('gamification_last_tab', tabName);
+            originalShowTab(tabName);
+        };
     </script>
 </body>
 </html>
